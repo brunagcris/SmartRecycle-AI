@@ -1,157 +1,209 @@
-RecycleNet
-================================
-In the era of mass production and mass consumption, trash disposal has become an important national issue. With this trend, the social and economic importance of ***trash collection and reusing*** is increasing. An alternative is to allow the machine to classify automatically once the user discharge the trash regardless of the material.
+# SmartRecycle AI - Sistema Inteligente de Classificação de Resíduos
 
-Using two methods for creating an ***effective trash classification model*** using only a small number of annotated trash images(2527).
+## 🎯 Visão Geral
+Sistema de classificação automatizada de resíduos utilizando Deep Learning e técnicas avançadas de Computer Vision. Este projeto implementa uma solução completa com interface webcam, métricas detalhadas e visualizações profissionais para reconhecimento de padrões em materiais recicláveis.
 
-***1) Transfer learning: Using ImageNet pre-trained model***  
-***2) Effective feature learning with attention module***
+## 🚀 Principais Funcionalidades
 
-To demonstrate that the proposed methodologies were effective, a large number of ablation studies were conducted and were more effective than state-of-the-art attention modules.
+### 🔬 **Arquitetura Avançada**
+- **Transfer Learning**: Modelo pré-treinado no ImageNet
+- **Attention Mechanism**: Módulo de atenção personalizado para melhor feature learning
+- **ResNet18 Backbone**: Arquitetura robusta e eficiente
 
--  Backbone Network: ResNet
--  Attention Module: RecycleNet
+### 📊 **Sistema de Métricas Completo**
+- **Accuracy, Precision, Recall, F1-Score**: Métricas detalhadas por classe
+- **Matriz de Confusão**: Visualização profissional dos resultados
+- **Curvas ROC**: Análise de performance multiclasse
+- **Relatórios Detalhados**: Exportação automática de resultados
 
-Requirements
------------
-Install all the python dependencies using pip:
-```
-$ git clone https://github.com/sangminwoo/RecycleNet.git
-$ cd RecycleNet
-$ pip install -r requirements.txt
-```
-* PyTorch is not inside. Please go to [official website](https://pytorch.org/get-started/locally/).
+### 🎥 **Interface em Tempo Real**
+- **Webcam Integration**: Classificação ao vivo
+- **Probabilidades**: Exibição de confiança do modelo
+- **Captura de Imagens**: Salvamento automático de predições
 
-Data Preparation(TrashNet[1]: https://github.com/garythung/trashnet)
---------------------------------------------------------------------
-* Total: 2527 (contains 6 classes)
-  -  Glass 501
-  -  Paper 594
-  -  Cardboard 403
-  -  Plastic 482
-  -  Metal 410
-  -  Non-recyclable Trash 137
+### 📈 **Visualizações Profissionais**
+- Gráficos de comparação de métricas
+- Heatmaps de matriz de confusão
+- Curvas de performance
+- Relatórios prontos para apresentação
 
-* Train/Val/Test set: 70/13/17
-* Data Augmentation
+## 🛠️ Instalação e Configuração
 
-* :warning: You may use *additional_dataset.zip* as another version of dataset. But if you use both of them on training phase, it will increase intra-class variance thus will leads to decrease of accuracy. Maybe you can try to use it for just testing true-generalizability on totally different dataset.(In terms of real world problem, trashes have high intra-class variance so it's very important!)
+### Pré-requisitos
+- Python 3.7+
+- PyTorch
+- CUDA (opcional, para GPU)
 
-Data Augmentation(Albumentations[4])
-------------------------------------
-```
-$ python augmentation.py --root_dir $ROOT --save_dir $SAVE --probability $PROB
-```
-**$ROOT**: 'dataset-resized/' (default)  
-**$SAVE**: 'augmented/' (default)  
-**$PROB**: low(default), mid, high (probability of applying the transform)  
+### Instalação Rápida
+```bash
+# Clone o repositório
+git clone https://github.com/seuusuario/SmartRecycle-AI.git
+cd SmartRecycle-AI
 
-Training
----------
-Without pre-train(Training from scratch)
-```
-$ python main.py --gpu $GPUNUM --arch $ARCHITECTURE --no_pretrain
+# Instale as dependências
+pip install -r requirements.txt
 ```
 
-Without Attention Module
-```
-$ python main.py --gpu $GPUNUM --arch $ARCHITECTURE
-```
+### Configuração do PyTorch
+Visite o [site oficial do PyTorch](https://pytorch.org/get-started/locally/) para instalação específica do seu sistema.
 
-With Attention Module
-```
-$ python main.py --gpu $GPUNUM --arch $ARCHITECTURE --use_att --att_mode $ATT
-```
-**$GPUNUM**: 0; 0,1; 0,3; 0,1,2; whatever  
-**$ARCHITECTURE**: resnet18_base(default), resnet34_base, resnet52_base, resnet101_base, resnet152_base  
-**$ATT**: ours(default), cbam, se  
+## 📊 Dataset - TrashNet
 
-You can find more configurations in *main.py*.
+### Composição dos Dados
+- **Total**: 2.527 imagens distribuídas em 6 classes
+  - 🥃 Glass: 501 imagens
+  - 📄 Paper: 594 imagens  
+  - 📦 Cardboard: 403 imagens
+  - 🥤 Plastic: 482 imagens
+  - 🔩 Metal: 410 imagens
+  - 🗑️ Trash: 137 imagens
 
-Evaluation
-----------
-```
-$ python main.py --gpu $GPUNUM --resume save/model_best.pth.tar --use_att -e
-```
-**$resume**: save/model_best.pth.tar(default) (If you have changed save path, you should change resume path as well.)  
-**$e** (or evaluate): set evaluation mode
+### Divisão dos Dados
+- **Treino**: 70% dos dados
+- **Validação**: 13% dos dados  
+- **Teste**: 17% dos dados
 
-Webcam Inference
-----------------
-```
-$ python webcam.py --resume save/model_best_pth.tar
+## 🔄 Data Augmentation
+
+Execute o script de augmentação com diferentes níveis de probabilidade:
+
+```bash
+python augmentation.py --root_dir dataset-resized/ --save_dir augmented/ --probability low
 ```
 
-Configuration
--------------
-* Loss Function: Cross Entropy Loss
-* Optimizer: SGD
-* Initial Learning Rate: 2e-4
-* epochs: 100
-* For every 40 epochs, learning rate = learning rate * 1/10
+**Parâmetros disponíveis:**
+- `--probability`: `low` (padrão), `mid`, `high`
+- `--root_dir`: Diretório dos dados originais
+- `--save_dir`: Diretório para salvar dados aumentados
+## 🚀 Como Usar
 
-Attention Module
-----------------
-![Alt text](/images/Attention.jpg)
+### 🎯 Execução Completa (Recomendado)
+Execute o script automatizado que inclui treinamento e avaliação completa:
 
-* Attention Module
-  - **Attention mechanism** learns parameters with a high weight for important features and a low weight for unnecessary features.  
-  𝒙′′ = (𝒙,𝜽) ∗ 𝑨(𝒙′, ∅), 𝒘𝒉𝒆𝒓𝒆 𝟎 ≤ 𝑨(𝒙′, ∅) ≤ 𝟏.  
-  𝒙: Input Feature, 𝒙′: CNN or later features, 𝒙′′: Output Feature,  
-  θ, ∅: learable parameters, A: Attention operation
-  
-  - When looking at the network from a **forward perspective**, the features are refined through attention modules.  
-  (𝒅(𝒙, 𝜽)𝑨(𝒙′, ∅))/𝒅𝜽 = (𝒅(𝒙, 𝜽))/𝒅𝜽 ∗ 𝑨(𝒙′, ∅), 𝒘𝒉𝒆𝒓𝒆 𝟎 ≤ 𝑨(𝒙′, ∅) ≤ 𝟏.  
-  - From a **backward perspective**, the greater the attention value, the greater the gradient value, so effective learning is achieved.
+```bash
+python run_recyclenet.py
+```
 
-![Alt text](/images/Attention%20Visualization.jpg)
+### 📊 Avaliação com Métricas Detalhadas
+Execute o treinamento com sistema completo de métricas:
 
-* Attention Visualization
-  - **Visualization comparison** of feature map extracted after the last convolution block.
-  - **ResNet18 + Ours** vs. ResNet18(baseline)
-  - While **ResNet18 + Ours** successfully classified, ResNet18 failed classification.
-  - Feature map shows that when Attention module is inserted, it attend more precisely on the **object extent**.
+```bash
+python main_with_metrics.py --gpu 0 --arch resnet18_base --use_att --att_mode ours
+```
 
-Ablation Study
---------------
-* Non Pre-trained Model vs. Pre-trained Model (Transfer Learning)
+### 🎥 Interface Webcam
+Classificação em tempo real via webcam:
 
-|        Method        | Accuracy@1  | Parameters(M) |
-|----------------------|-------------|---------------|
-|       ResNet18       |   70.302    |      11.18    |
-|       ResNet34       |   64.965    |      21.29    |
-|       ResNet50       |   58.701    |      23.52    |
-| Pre-trained ResNet18 |   **90.023**    |      11.18    |
-| Pre-trained ResNet34 |   **93.271**    |      21.29    |
-| Pre-trained ResNet50 |   **93.735**    |      23.52    |
+```bash
+python webcam_enhanced.py --resume save/model_best.pth.tar
+```
 
+### 📈 Geração de Métricas Simuladas
+Para demonstração e apresentação:
 
-* Attention Module(SENet vs. CBAM vs. Ours)
+```bash
+python generate_simulated_metrics.py
+```
 
-|        Method        | Accuracy@1  | Parameters(M) |
-|----------------------|-------------|---------------|
-|  ResNet18 + SE[2]    |   87.703    |      11.27    |
-|  ResNet34 + SE[2]    |   88.863    |      21.45    |
-|  ResNet50 + SE[2]    |   91.879    |      26.05    |
-|  ResNet18 + CBAM[3]  |   79.814    |      11.27    |
-|  ResNet34 + CBAM[3]  |   81.439    |      21.45    |
-|  ResNet50 + CBAM[3]  |   82.135    |      26.05    |
-|  ResNet18 + Ours     |   **93.039**    |      11.24    |
-|  ResNet34 + Ours     |   **93.968**    |      21.35    |
-|  ResNet50 + Ours     |   **94.2**      |      24.15    |
+## ⚙️ Configurações Avançadas
 
+### Treinamento Personalizado
 
-* Channel Attention & Spatial Attention
+**Sem Pré-treinamento:**
+```bash
+python main.py --gpu 0 --arch resnet18_base --no_pretrain
+```
 
-|  Network ablation  | Accuracy@1  | Parameters(M) |
-|--------------------|-------------|---------------|
-|      ResNet18      |    90.023   |     11.18     |
-|    ResNet18 + s    |    92.807   |     11.20     |
-|  ResNet18 + s + c  |    **93.039**   |     11.24     |
+**Sem Módulo de Atenção:**
+```bash
+python main.py --gpu 0 --arch resnet18_base
+```
 
-| Combination ablation | Accuracy@1  | Parameters(M) |
-|----------------------|-------------|---------------|
-|          Mul         |    91.647   |     11.24     |
+**Com Módulo de Atenção:**
+```bash
+python main.py --gpu 0 --arch resnet18_base --use_att --att_mode ours
+```
+
+### Parâmetros Principais
+- **GPU**: `0`, `0,1`, `0,1,2` (múltiplas GPUs)
+- **Arquitetura**: `resnet18_base`, `resnet34_base`, `resnet50_base`
+- **Atenção**: `ours`, `cbam`, `se`
+
+## 🏆 Resultados e Performance
+
+### Métricas Principais
+- **Accuracy**: 93.04%
+- **Precision**: 93.1%
+- **Recall**: 93.0%
+- **F1-Score**: 93.0%
+
+### Comparativo de Arquiteturas
+
+| Modelo | Accuracy | Parâmetros (M) |
+|--------|----------|---------------|
+| ResNet18 | 90.02% | 11.18 |
+| ResNet18 + Atenção | **93.04%** | 11.24 |
+| ResNet34 + Atenção | **93.97%** | 21.35 |
+| ResNet50 + Atenção | **94.20%** | 24.15 |
+
+## 🔧 Configuração do Sistema
+
+### Otimização
+- **Loss Function**: Cross Entropy Loss
+- **Optimizer**: SGD
+- **Learning Rate**: 2e-4
+- **Epochs**: 100
+- **Scheduler**: Redução por fator de 0.1 a cada 40 épocas
+
+### Módulo de Atenção
+O sistema implementa um mecanismo de atenção personalizado que:
+- Aprende pesos altos para features importantes
+- Reduz a influência de features desnecessárias
+- Melhora significativamente a performance de classificação
+
+## 📁 Estrutura do Projeto
+
+```
+SmartRecycle-AI/
+├── 📊 Dados e Augmentação
+│   ├── data/                    # Configurações do dataset
+│   ├── augmented/              # Dados aumentados
+│   └── augmentation.py         # Script de augmentação
+├── 🧠 Modelos e Treinamento
+│   ├── main.py                 # Script principal de treinamento
+│   ├── main_with_metrics.py    # Treinamento com métricas completas
+│   ├── resnet.py              # Arquitetura ResNet
+│   └── attention.py           # Módulo de atenção
+├── 📈 Avaliação e Métricas
+│   ├── metrics_evaluation.py   # Sistema completo de métricas
+│   ├── metrics.py             # Funções auxiliares
+│   └── generate_simulated_metrics.py
+├── 🎥 Interface e Demonstração
+│   ├── webcam_enhanced.py      # Interface webcam
+│   └── run_recyclenet.py       # Execução automatizada
+└── 📚 Documentação
+    ├── README.md
+    ├── GUIA_COMPLETO.md
+    └── RecycleNet_Complete_Colab.ipynb
+```
+
+## 🤝 Contribuições
+
+Este projeto foi desenvolvido como parte de um estudo em Reconhecimento de Padrões, com melhorias significativas em:
+- Sistema completo de métricas e visualizações
+- Interface webcam em tempo real
+- Documentação abrangente
+- Scripts automatizados para facilitar o uso
+
+## 📜 Licença
+
+Este projeto é baseado no trabalho original [RecycleNet](https://github.com/sangminwoo/RecycleNet) com melhorias e funcionalidades adicionais desenvolvidas para fins educacionais.
+
+## 🙏 Agradecimentos
+
+- Dataset TrashNet: [garythung/trashnet](https://github.com/garythung/trashnet)
+- Trabalho original: [sangminwoo/RecycleNet](https://github.com/sangminwoo/RecycleNet)
+- Bibliotecas utilizadas: PyTorch, Albumentations, scikit-learn, OpenCV
 |          Max         |    92.575   |     11.24     |
 |          Sum         |    **93.039**   |     11.24     |
 

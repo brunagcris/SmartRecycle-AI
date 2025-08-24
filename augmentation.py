@@ -17,10 +17,14 @@ def get_arguments():
 def augment_and_save(aug_list, root_dir, save_dir):
 	img_list = []
 	folder_list = os.listdir(root_dir)
+	# Filter out files that are not directories (like .DS_Store)
+	folder_list = [folder for folder in folder_list if os.path.isdir(os.path.join(root_dir, folder))]
 	folders = [os.path.join(root_dir, folder) for folder in folder_list]
 	for folder in folders:
 		files = os.listdir(folder)
-		img_list.append([os.path.join(folder, file) for file in files])
+		# Filter out non-image files
+		image_files = [file for file in files if file.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp', '.tiff'))]
+		img_list.append([os.path.join(folder, file) for file in image_files])
 
 	for i in range(len(img_list)):
 		if not os.path.exists(os.path.join(save_dir, folder_list[i])):
@@ -53,10 +57,10 @@ class augmentation():
 			A.OneOf([
 				A.RandomCrop(height=224, width=224, p=1), # Crop a random part of the input.
 				A.CenterCrop(height=224, width=224, p=1), # Crop the central part of the input.
-				A.RandomSizedCrop(min_max_height=(256,384), height=224, width=224, p=1), # Crop a random part of the input and rescale it to some size.
+				A.RandomSizedCrop(min_max_height=(256, 384), size=(224, 224), p=1)
 				], p=1),
-			A.RandomBrightness(limit=0.2, p=self.p), # Randomly change brightness of the input image.
-			A.RandomContrast(limit=0.2, p=self.p) # Randomly change contrast of the input image.
+			A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0, p=self.p),
+			A.RandomBrightnessContrast(brightness_limit=0, contrast_limit=0.2, p=self.p)
 			], p=1)
 
 		return aug
@@ -72,7 +76,6 @@ class augmentation():
 			A.OneOf([
 				A.HorizontalFlip(p=self.p), # Flip the input vertically around the x-axis.
 				A.VerticalFlip(p=self.p), # Flip the input horizontally around the y-axis.
-				A.Flip(p=self.p) # Flip the input either horizontally, vertically or both horizontally and vertically.
 				], p=1)
 			], p=1)
 
@@ -88,7 +91,7 @@ class augmentation():
 			], p=1),
 			A.OneOf([
 				A.RandomGamma(gamma_limit=(80,120), p=self.p),
-				A.OpticalDistortion(distort_limit=0.05, shift_limit=0.05, p=self.p),
+				A.OpticalDistortion(distort_limit=0.05, p=self.p),
 				A.ElasticTransform(p=self.p),
 				A.HueSaturationValue(p=self.p), # Randomly change hue, saturation and value of the input image.
 				A.RGBShift(p=self.p), # Randomly shift values for each channel of the input RGB image.
@@ -96,7 +99,7 @@ class augmentation():
 				A.CLAHE(p=self.p), # Apply Contrast Limited Adaptive Histogram Equalization to the input image.
 				A.InvertImg(p=self.p), # Invert the input image by subtracting pixel values from 255.
 				], p=1),
-			A.GaussNoise(var_limit=(10.0, 50.0), mean=0, p=self.p), # Apply gaussian noise to the input image.
+			A.GaussNoise(var_limit=(10.0, 50.0), p=self.p), # Apply gaussian noise to the input image.
 			A.RandomShadow(p=self.p) # Simulates shadows for the image
 			], p=1)
 
